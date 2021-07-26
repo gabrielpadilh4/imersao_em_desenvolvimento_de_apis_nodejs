@@ -41,6 +41,45 @@ class Database {
 
     return dadosFiltrados;
   }
+
+  async atualizar(id, heroi) {
+    const dados = await this._obterDadosArquivo();
+
+    const indice = dados.findIndex((item) => item.id === parseInt(id));
+
+    if (indice === -1) {
+      throw Error("O heroi informado nao existe");
+    }
+
+    const atual = dados[indice];
+
+    const modificacao = {
+      ...atual,
+      ...heroi,
+    };
+
+    dados.splice(indice, 1);
+
+    return await this._escreverArquivo([...dados, modificacao]);
+  }
+
+  async remove(id) {
+    if (!id) {
+      return await this._escreverArquivo([]);
+    }
+
+    const dados = await this._obterDadosArquivo();
+
+    const indice = dados.findIndex((item) => item.id === parseInt(id));
+
+    if (indice === -1) {
+      throw Error("O id do heroi nao existe");
+    }
+
+    dados.splice(indice, 1);
+
+    return await this._escreverArquivo(dados);
+  }
 }
 
 module.exports = new Database();
